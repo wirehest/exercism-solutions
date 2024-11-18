@@ -1,6 +1,4 @@
-export const colorCode = (color: string): number => {
-  return COLORS.indexOf(color);
-};
+type Resistors = (typeof COLORS)[number];
 
 export const COLORS = [
   'black',
@@ -13,4 +11,8 @@ export const COLORS = [
   'violet',
   'grey',
   'white',
-];
+] as const;
+
+export const colorCode = (color: Resistors): number => {
+  return COLORS.indexOf(color);
+};
