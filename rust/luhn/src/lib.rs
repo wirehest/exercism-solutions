@@ -1,40 +1,31 @@
+use std::cmp::Ordering;
+
 /// Check a Luhn checksum.
 pub fn is_valid(code: &str) -> bool {
-    if !code
-        .chars()
-        .all(|char| char.is_whitespace() || char.is_numeric())
-    {
+    let code_chars = code.chars().filter(|c| !c.is_whitespace());
+    let has_invalid_characters = code_chars.filter(|c| !c.is_numeric()).count() > 0;
+    let code_digits: Vec<_> = code.chars().filter(|c| c.is_numeric()).collect();
+
+    if code_digits.len() < 2 || has_invalid_characters {
         return false;
     }
 
-    if code
-        .chars()
-        .filter(|char| char.is_numeric())
-        .collect::<String>()
-        .len()
-        == 1
-    {
-        return false;
-    }
-
-    code.chars()
-        .filter(|char| char.is_numeric())
+    code_digits
+        .iter()
         .rev()
         .map(|char| char.to_digit(10).unwrap())
         .enumerate()
-        .map(|(i, digit)| {
-            if i % 2 != 0 {
-                if 2 * digit > 9 {
-                    2 * digit - 9
-                } else {
-                    2 * digit
+        .map(|(i, digit)| match i % 2 {
+            0 => digit,
+            _ => {
+                let doubled = 2 * digit;
+                match doubled.cmp(&9) {
+                    Ordering::Greater => doubled - 9,
+                    _ => doubled,
                 }
-            } else {
-                digit
             }
         })
         .sum::<u32>()
         % 10
         == 0
 }
-
