@@ -1,19 +1,14 @@
-'use strict';
+export function convert(num) {
+  const SOUNDS = {
+    3: 'Pling',
+    5: 'Plang',
+    7: 'Plong',
+  };
 
-/**
- * Converts num into raindrop sounds based on divisibility:
- * - if divisible by 3, add "Pling" to the result;
- * - if divisible by 5, add "Plang" to the result;
- * - if divisible by 7, add "Plong" to the result;
- * - if not divisible by 3, 5, or 7, return num as a string.
- */
-export const convert = (num) => {
-  let result = '';
-  if (!(num % 3)) result += 'Pling';
-  if (!(num % 5)) result += 'Plang';
-  if (!(num % 7)) result += 'Plong';
+  let result = Object.entries(SOUNDS).reduce((raindrops, [divisor, sound]) => {
+    if (num % divisor === 0) raindrops += sound;
+    return raindrops;
+  }, '');
 
-  return result.length > 0 ? result : String(num);
-};
-
-console.assert(convert(1) === '1');
+  return !result ? `${num}` : result;
+}
