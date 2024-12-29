@@ -1,19 +1,23 @@
-export function primes(n: number): (number | undefined)[] {
-  if (n === 1) return [];
+export function primes(n: number): number[] {
+  // limit factors, per trial division
+  const MAX_FACTOR = Math.ceil(Math.sqrt(n));
 
-  let primes = [false, false].concat(Array(n - 1).fill(true));
+  // initialize boolean array to track which indices are prime
+  let factors = [false, false].concat(Array(n - 1).fill(true));
 
-  for (let i = 2; i < Math.ceil(Math.sqrt(n)); i++) {
-    if (primes[i]) {
-      primes.forEach((_, j) => {
-        if (!(j % i) && j > i) primes[j] = false;
-      });
+  for (let i = 2; i < MAX_FACTOR; i++) {
+    if (factors[i]) {
+      let indexOfNextMultiple = 2 * i;
+      while (indexOfNextMultiple <= n) {
+        factors[indexOfNextMultiple] = false;
+        indexOfNextMultiple += i;
+      }
     }
   }
 
-  return primes
-    .map((x, i) => {
-      if (x) return i;
-    })
-    .filter(Boolean);
+  // return accumulated indices of true elements
+  return factors.reduce<number[]>((acc, isPrime, i) => {
+    if (isPrime) acc.push(i);
+    return acc;
+  }, []);
 }
