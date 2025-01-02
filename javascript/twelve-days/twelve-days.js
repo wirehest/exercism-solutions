@@ -1,39 +1,38 @@
-'use strict';
+const GIFTS = new Map([
+  ['first', 'a Partridge in a Pear Tree'],
+  ['second', 'two Turtle Doves'],
+  ['third', 'three French Hens'],
+  ['fourth', 'four Calling Birds'],
+  ['fifth', 'five Gold Rings'],
+  ['sixth', 'six Geese-a-Laying'],
+  ['seventh', 'seven Swans-a-Swimming'],
+  ['eighth', 'eight Maids-a-Milking'],
+  ['ninth', 'nine Ladies Dancing'],
+  ['tenth', 'ten Lords-a-Leaping'],
+  ['eleventh', 'eleven Pipers Piping'],
+  ['twelfth', 'twelve Drummers Drumming'],
+]);
 
-/** Returns the verse or verses from the Twelve Days of Christmas. */
-export const recite = (rangeStart, rangeEnd) => {
-  const giftArray = [
-    // '',
-    ['first', 'a Partridge'],
-    ['second', 'two Turtle Doves'],
-    ['third', 'three French Hens'],
-    ['fourth', 'four Calling Birds'],
-    ['fifth', 'five Gold Rings'],
-    ['sixth', 'six Geese-a-Laying'],
-    ['seventh', 'seven Swans-a-Swimming'],
-    ['eighth', 'eight Maids-a-Milking'],
-    ['ninth', 'nine Ladies Dancing'],
-    ['tenth', 'ten Lords-a-Leaping'],
-    ['eleventh', 'eleven Pipers Piping'],
-    ['twelfth', 'twelve Drummers Drumming'],
-  ];
-  const beginning = 'On the';
-  const middle = 'day of Christmas my true love gave to me:';
-  const end = 'in a Pear Tree.\n';
+export function recite(rangeStart, rangeEnd) {
   let verses = [];
 
-  for (let i = rangeStart - 1; i < (rangeEnd ?? rangeStart); i++) {
-    let gifts = getGifts(i + 1);
-    verses.push(`${beginning} ${giftArray[i][0]} ${middle} ${gifts} ${end}`);
+  for (let i = rangeStart; i <= (rangeEnd ?? rangeStart); i++) {
+    let { day, gifts } = getVerseElements(i - 1);
+    verses.push(
+      `On the ${day} day of Christmas my true love gave to me: ${gifts}.\n`,
+    );
   }
-  return verses.length === 1 ? verses[0] : verses.join('\n');
 
-  function getGifts(verse) {
-    let gifts = '';
-    for (let i = 0; i < verse; i++) {
-      let conjunct = i === 0 ? '' : i === 1 ? ', and ' : ', ';
-      gifts = giftArray[i][1] + conjunct + gifts;
-    }
-    return gifts;
-  }
-};
+  return verses.length === 1 ? verses[0] : verses.join('\n');
+}
+
+function getVerseElements(verseNumber) {
+  let giftIndices = [...Array(verseNumber + 1).keys()];
+  let day = [...GIFTS.keys()][verseNumber];
+  let gifts = giftIndices.reduce((gifts, idx) => {
+    let conjunction = idx === 0 ? '' : idx === 1 ? ', and ' : ', ';
+    return [...GIFTS.values()][idx] + conjunction + gifts;
+  }, '');
+
+  return { day, gifts };
+}
